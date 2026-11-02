@@ -1,0 +1,24 @@
+# Бонус: инфраструктура как код (Render Blueprint). Значения секретов в файле НЕ хранятся.
+# Имя сервиса и адреса — подставьте свои, если они отличаются
+services:
+  - type: web
+    name: agromarket-api-kaplinnikitos-alt
+    runtime: node
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run db:migrate && npm start
+    healthCheckPath: /api/health
+    autoDeploy: false                   # деплоем управляет GitHub Actions
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 2h
+      - key: DATABASE_URL
+        sync: false                     # вводится вручную в панели Render
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false

@@ -1,0 +1,39 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Картофель, 1 кг",
+      "price": 350,
+      "image": "https://placehold.co/300x200?text=Kartofel",
+      "category": "Овощи"
+    },
+    {
+      "id": 2,
+      "name": "Мёд натуральный, 1 л",
+      "price": 4500,
+      "image": "https://placehold.co/300x200?text=Med",
+      "category": "Мёд"
+    },
+    {
+      "id": 3,
+      "name": "Молоко фермерское, 1 л",
+      "price": 600,
+      "image": "https://placehold.co/300x200?text=Moloko",
+      "category": "Молочные продукты"
+    },
+    {
+      "id": 4,
+      "name": "Яйца домашние, 10 шт",
+      "price": 1200,
+      "image": "https://placehold.co/300x200?text=Yayca",
+      "category": "Яйца"
+    },
+    {
+      "id": 5,
+      "name": "Яблоки алматинские, 1 кг",
+      "price": 800,
+      "image": "https://placehold.co/300x200?text=Yabloki",
+      "category": "Фрукты"
+    }
+  ]
+}

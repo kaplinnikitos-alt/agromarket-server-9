@@ -1,0 +1,36 @@
+{
+  "name": "agromarket-server",
+  "version": "1.0.0",
+  "description": "Backend «АгроМаркета»: Node.js + Express + PostgreSQL",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "db:init": "node db/seed.js",
+    "db:migrate": "node db/migrate.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "smoke": "node scripts/smoke.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "supertest": "^7.1.0",
+    "vitest": "^3.2.4"
+  }
+}

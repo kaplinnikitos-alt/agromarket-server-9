@@ -1,0 +1,72 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import { pool } from './db/pool.js';
+import { logger } from './middleware/logger.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import authRouter from './routes/auth.js';
+import productsRouter from './routes/products.js';
+import ordersRouter from './routes/orders.js';
+import categoriesRouter from './routes/categories.js';
+
+const app = express();
+
+// Версия = первые 7 символов коммита. Render сам кладёт SHA в RENDER_GIT_COMMIT
+const VERSION = (process.env.RENDER_GIT_COMMIT || 'local').slice(0, 7);
+
+// На Render запрос приходит через прокси-балансировщик. Без этой строки
+// req.ip — адрес прокси, и лимит попыток входа (429) считал бы
+// ВСЕХ пользователей одним человеком
+app.set('trust proxy', 1);
+
+// ФИО автора (используется в /api/about)
+const AUTHOR = 'Каплин Никита Сергеевич';
+
+// Конвейер middleware: helmet -> cors -> json -> logger -> маршруты -> 404 -> обработчик ошибок
+app.use(helmet()); // защитные HTTP-заголовки — первым middleware
+// CORS_ORIGIN может содержать несколько адресов через запятую:
+// https://agromarket-kaplinnikitos-alt.vercel.app,http://localhost:5173
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+app.use(cors({ origin: allowedOrigins })); // разрешаем только наши frontend-адреса
+app.use(express.json({ limit: '10kb' })); // тело запроса не больше 10 КБ
+
+// В тестах лог каждого запроса только мешает читать результат
+if (process.env.NODE_ENV !== 'test') {
+  app.use(logger);
+}
+
+app.get('/', (req, res) => {
+  res.send('АгроМаркет API работает');
+});
+
+// Health-check: хостинг и smoke-тест спрашивают «ты жив?».
+// Отвечаем «да», только если отвечает и база
+app.get('/api/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', db: 'ok', version: VERSION });
+  } catch {
+    res.status(503).json({ status: 'error', db: 'unavailable', version: VERSION });
+  }
+});
+
+app.get('/api/about', (req, res) => {
+  res.json({ name: 'АгроМаркет', version: '1.0', author: AUTHOR });
+});
+
+app.use('/api/auth', authRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/orders', ordersRouter);
+app.use('/api/categories', categoriesRouter);
+
+// Сюда доходят только запросы, которые не обработал ни один маршрут
+app.use((req, res) => {
+  res.status(404).json({ error: `Маршрут ${req.method} ${req.originalUrl} не найден` });
+});
+
+app.use(errorHandler); // обработчик ошибок — по-прежнему последним
+
+export default app; // приложение БЕЗ запуска сервера: его импортируют тесты и server.js

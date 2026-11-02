@@ -1,0 +1,9 @@
+node_modules
+coverage/
+
+# Все .env-файлы закрыты от Git (секреты!), кроме образцов
+.env*
+!.env.example
+!.env.test.example
+!.env.neon.example
+!.env.smoke.example

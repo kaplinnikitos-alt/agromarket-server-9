@@ -1,0 +1,22 @@
+# Бонус: ежедневный smoke-тест продакшена + ручной запуск.
+# Если ночью что-то сломалось, GitHub пришлёт письмо о красном запуске
+name: Daily smoke
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/smoke.js
+        env:
+          API_URL: ${{ vars.API_URL }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          # EXPECTED_VERSION не задан — подойдёт любая работающая версия
